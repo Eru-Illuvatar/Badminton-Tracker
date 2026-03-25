@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body class="popup-body">
+    <div class="row-header">
+    <div class="discipline-selector-popup">
+      <div class="discipline-icon-popup active" data-discipline="S" title="Singles">
+        <img src="singles-light.png" class="light-icon" alt="Singles">
+        <img src="singles-dark.png" class="dark-icon" alt="Singles">
+        <span class="discipline-tooltip">Singles</span>
+      </div>
+      <div class="discipline-icon-popup" data-discipline="D" title="Doubles">
+        <img src="doubles-light.png" class="light-icon" alt="Doubles">
+        <img src="doubles-dark.png" class="dark-icon" alt="Doubles">
+        <span class="discipline-tooltip">Doubles</span>
+      </div>
+      <div class="discipline-icon-popup" data-discipline="M" title="Mixed">
+        <img src="mixed-light.png" class="light-icon" alt="Mixed">
+        <img src="mixed-dark.png" class="dark-icon" alt="Mixed">
+        <span class="discipline-tooltip">Mixed</span>
+      </div>
+    </div>
+        <h3>Add New Match</h3>
+        <button id="popupThemeBtn" class="btn-icon">🌙</button>
+  </div>
+  <div class="main-container">
+    <div class="input-row">
+      <label for="event">Comp/Tournament:</label>
+      <input type="text" id="event" placeholder="Tournoi National Malmedy BC">
+    </div>
+    <div id="singlesForm" class="discipline-form active">
+      <div class="input-row input-row-opp">
+        <label for="opponent">Opponent:</label>
+        <input type="text" id="opponent" placeholder="Scar">
+      </div>
+      <div class="split-row">
+        <div class="col-half">
+          <label for="myLevel">My Level:</label>
+          <select id="myLevel">
+            <option value="12" selected>12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+        <div class="col-half">
+          <label for="oppLevel">Opp Level:</label>
+          <select id="oppLevel">
+            <option value="12" selected>12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div id="doublesForm" class="discipline-form">
+      <div class="input-row">
+        <label for="teammate">Teammate:</label>
+        <input type="text" id="teammate" placeholder="Zazu">
+      </div>
+      <div class="input-row">
+        <label for="opponent1">Opponent 1:</label>
+        <input type="text" id="opponent1" placeholder="Timon">
+      </div>
+
+      <div class="input-row input-row-opp2">
+        <label for="opponent2">Opponent 2:</label>
+        <input type="text" id="opponent2" placeholder="Pumbaa">
+      </div>
+      <div class="split-row">
+        <div class="col-half">
+          <label for="myLevelDouble">My Level:</label>
+          <select id="myLevelDouble">
+            <option value="12" selected>12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+        <div class="col-half">
+          <label for="teammateLevel">Ally Level:</label>
+          <select id="teammateLevel">
+            <option value="12" selected>12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="split-row">
+        <div class="col-half">
+          <label for="opp1Level">Opp1 Level:</label>
+          <select id="opp1Level">
+            <option value="12" selected>12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+        <div class="col-half">
+          <label for="opp2Level">Opp2 Level:</label>
+          <select id="opp2Level">
+            <option value="12" selected>12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="split-row header-row">
+      <div class="col-half">
+        <label>Score (You - Them)</label>
+      </div>
+      <div class="col-half">
+        <label>Date (dd/mm/yy)</label>
+      </div>
+    </div>
+    <div class="split-row align-center">
+      <div class="col-half set-container">
+        <span class="set-label">Set 1:</span>
+        <input type="text" id="s1_me" maxlength="2" class="score-input" placeholder="21">
+        <span class="dash">-</span>
+        <input type="text" id="s1_opp" maxlength="2" class="score-input" placeholder="19">
+      </div>
+      <div class="col-half">
+        <input type="text" id="date" placeholder="15/06/00">
+      </div>
+    </div>
+    <div class="split-row align-center">
+      <div class="col-half set-container">
+        <span class="set-label">Set 2:</span>
+        <input type="text" id="s2_me" maxlength="2" class="score-input" placeholder="21">
+        <span class="dash">-</span>
+        <input type="text" id="s2_opp" maxlength="2" class="score-input" placeholder="15">
+      </div>
+      <div class="col-half">
+        <label for="duration" class="label-inline">Duration (min)</label>
+      </div>
+    </div>
+    <div class="split-row align-center">
+      <div class="col-half set-container">
+        <span class="set-label">Set 3 (optional):</span>
+        <input type="text" id="s3_me" maxlength="2" class="score-input">
+        <span class="dash">-</span>
+        <input type="text" id="s3_opp" maxlength="2" class="score-input">
+      </div>
+      <div class="col-half">
+        <input type="number" id="duration" placeholder="45">
+      </div>
+    </div>
+    <div class="form-note" id="levelNote">
+      For doubles/mixed: Doubles and <strong>mixed</strong> matches are saved as doubles.
+    </div>
+    <div class="split-row button-row">
+      <button id="saveBtn" class="btn-save">Save Match</button>
+      <button id="openDashBtn" class="btn-dash">📊 Open Dashboard</button>
+    </div>
+    <button id="scrapeBtn" class="btn scrape-btn">
+      🕷️ Scrape Current Page
+    </button>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

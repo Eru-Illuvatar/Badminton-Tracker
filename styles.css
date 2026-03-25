@@ -1,0 +1,1113 @@
+/* --- Global & Reset --- */
+:root {
+    --primary-color: #007bff;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --text-color: #2c3e50;
+    --bg-color: #f4f6f8;
+    --card-bg: white;
+    --border-color: #ddd;
+    --input-bg: white;
+    --input-border: #ddd;
+    --table-header-bg: #f8f9fa;
+    --table-border: #eee;
+    --row-win-bg: #f0fff4;
+    --row-loss-bg: #fff5f5;
+    --row-excluded-bg: #f8f9fa;
+    --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    --modal-overlay: rgba(0, 0, 0, 0.5);
+    --tooltip-bg: #333;
+    --extra-points-color: #666;
+    --primary-color-rgb: 0, 123, 255;
+    --text-muted: #7f8c8d;
+    
+    /* Chart colors for light mode */
+    --chart-grid: rgba(0, 0, 0, 0.08);
+    --chart-text: #5a6772;
+    --chart-line-color: #4A90E2;
+    --chart-fill-color: rgba(74, 144, 226, 0.1);
+    --chart-threshold-line: rgba(255, 65, 105, 0.4);
+    --chart-threshold-text: rgba(255, 65, 105, 0.8);
+}
+
+body.dark-mode {
+    --primary-color: #4dabf7;
+    --success-color: #40c057;
+    --danger-color: #fa5252;
+    --warning-color: #fab005;
+    --info-color: #15aabf;
+    --text-color: #e0e0e0;
+    --bg-color: #1a1a1a;
+    --card-bg: #2d2d2d;
+    --border-color: #444;
+    --input-bg: #333;
+    --input-border: #555;
+    --table-header-bg: #333;
+    --table-border: #444;
+    --row-win-bg: #1e3a29;
+    --row-loss-bg: #3a1e1e;
+    --row-excluded-bg: #252525;
+    --shadow: 0 2px 4px rgba(0,0,0,0.3);
+    --modal-overlay: rgba(0, 0, 0, 0.7);
+    --tooltip-bg: #444;
+    --extra-points-color: #aaa;
+    --primary-color-rgb: 77, 171, 247;
+    --text-muted: #aaa;
+    
+    /* Chart colors for dark mode */
+    --chart-grid: rgba(255, 255, 255, 0.08);
+    --chart-text: #b0b7c3;
+    --chart-line-color: #6EB5FF;
+    --chart-fill-color: rgba(110, 181, 255, 0.1);
+    --chart-threshold-line: rgba(255, 105, 145, 0.5);
+    --chart-threshold-text: rgba(255, 105, 145, 0.9);
+}
+
+/* --- Base & Reset --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+    margin: 0;
+    box-sizing: border-box;
+    background-color: var(--bg-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h3, h4 {
+    color: var(--text-color);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--table-header-bg);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--table-header-bg);
+    box-sizing: border-box;
+}
+
+body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--table-header-bg);
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #000;
+        --text-color: #000;
+    }
+    
+    body.dark-mode {
+        --border-color: #fff;
+        --text-color: #fff;
+        --bg-color: #000;
+        --card-bg: #111;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+@media print {
+    body.dark-mode {
+        --bg-color: white;
+        --card-bg: white;
+        --text-color: black;
+        --border-color: #ddd;
+    }
+    
+    .card, .chart-box, .table-box, .header {
+        box-shadow: none;
+        border: 1px solid var(--border-color);
+    }
+    
+    .btn, .action-btn, .modal-overlay, .modal {
+        display: none !important;
+    }
+}
+
+body.dark-mode canvas {
+    filter: brightness(0.95) contrast(1.05);
+}
+
+datalist option {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+
+/* --- Forms & Inputs --- */
+.form-group {
+    margin-bottom: 12px;
+}
+
+label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+input, select {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+input::placeholder,
+select::placeholder {
+    color: var(--extra-points-color);
+}
+
+input:hover, select:hover {
+    border-color: var(--primary-color);
+}
+
+input:focus, select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+/* Score validation */
+input:invalid {
+    border-color: var(--danger-color);
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* Table Filters */
+.table-filter {
+    box-sizing: border-box;
+    padding: 4px;
+    font-size: 0.85rem;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    max-width: 150px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.table-filter:hover,
+.table-filter:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* Specific filter widths */
+#filterYear { width: 75px; }
+#filterMyLvl { width: 50px; }
+#filterOppLvl { width: 50px; }
+#filterResult { width: 100px; }
+
+#filterOppName {
+    width: 140px;
+    flex: 0 0 auto;
+}
+
+#filterOpponent {
+    width: 180px;
+}
+
+/* Chart Year Filter */
+.chart-year-filter {
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    width: 100px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.chart-year-filter:hover,
+.chart-year-filter:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* INLINE EDIT STYLES */
+.row-input {
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    border-radius: 4px;
+    transition: all 0.2s;
+    width: 100%;
+    max-width: 100%;
+}
+
+.row-input:hover {
+    background-color: rgba(0,0,0,0.03);
+    border-color: var(--border-color);
+}
+
+.row-input:focus {
+    background-color: var(--input-bg);
+    border: 1px solid var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+/* Specific input widths */
+.input-date { 
+    width: 100%; 
+    max-width: 100%;
+    text-align: left;
+}
+.input-type { 
+    width: 100%; 
+    max-width: 100%;
+    text-align: left;
+}
+
+/* Style for number input fields */
+.input-opp-rank, .input-my-rank {
+    width: 100%;
+    max-width: 100%;
+    text-align: center; 
+    padding: 2px 0;
+    appearance: textfield; /* Standard */
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+}
+
+.input-opp-rank::-webkit-outer-spin-button,
+.input-opp-rank::-webkit-inner-spin-button,
+.input-my-rank::-webkit-outer-spin-button,
+.input-my-rank::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-opp-name { 
+    width: 100%; 
+    max-width: 100%;
+    text-align: left;
+}
+
+.input-score { 
+    width: 100%; 
+    max-width: 100%;
+    text-align: left;
+}
+
+.input-dur { 
+    width: 100%;
+    max-width: 30px;
+    text-align: center; 
+    -moz-appearance: textfield;
+}
+
+.input-dur::-webkit-outer-spin-button,
+.input-dur::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Profile Input Styles */
+.profile-input-group {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.profile-input-group:last-child {
+    border-bottom: none;
+    margin-bottom: 10px;
+}
+
+.profile-input-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.profile-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    object-fit: contain;
+}
+
+.profile-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 12px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: all 0.2s ease;
+}
+
+.profile-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+}
+
+.profile-input:invalid {
+    border-color: var(--danger-color);
+}
+
+.profile-input:valid {
+    border-color: var(--success-color);
+}
+
+.input-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+.profile-note {
+    margin-top: 12px;
+    padding: 8px;
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 4px;
+    border-left: 3px solid var(--warning-color);
+}
+
+.profile-note small {
+    color: var(--text-muted);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* Simulator Input Styles */
+.simulator-input {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    text-align: center;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.simulator-input:hover,
+.simulator-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* Dark mode adjustments for form inputs */
+body.dark-mode .profile-input {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .profile-input:focus {
+    border-color: var(--primary-color);
+}
+
+body.dark-mode .profile-note {
+    background: rgba(255, 193, 7, 0.1);
+    border-left-color: var(--warning-color);
+}
+
+/* Layout styles for modals (used in both dashboard and popup) */
+.split-row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+}
+
+.col-half {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.align-center {
+    align-items: center;
+}
+
+/* --- Buttons --- */
+button, .btn {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: inherit;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 38px;
+    line-height: 1;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+}
+
+button:hover, .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Button Color Variants */
+.btn-save, .btn-export { background-color: var(--success-color); color: white; }
+.btn-save:hover, .btn-export:hover { background-color: #218838; }
+
+.btn-dash, .btn-primary { background-color: var(--primary-color); color: white; }
+.btn-dash:hover, .btn-primary:hover { background-color: #0069d9; }
+
+.btn-danger { background: var(--danger-color); color: white; }
+.btn-danger:hover { background: #c82333; }
+
+.btn-import { background: var(--info-color); color: white; }
+.btn-import:hover { background: #138496; }
+
+.btn-secondary {
+    background-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--table-header-bg);
+}
+
+/* Action Buttons (in tables) */
+.action-btn { 
+    cursor: pointer; 
+    padding: 6px; 
+    margin: 0 2px; 
+    border-radius: 4px; 
+    border: 1px solid var(--border-color); 
+    background: var(--input-bg); 
+    font-size: 14px; 
+    width: auto; 
+    display: inline-block;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover { 
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Icon Buttons */
+.icon-btn {
+    position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
+    cursor: pointer;
+}
+
+.icon-btn:hover {
+    background-color: var(--table-header-bg);
+    transform: scale(1.1);
+}
+
+.icon-btn:active {
+    transform: scale(0.95);
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Simulator Buttons */
+.simulator-remove-btn {
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.simulator-remove-btn:hover {
+    background: #c82333;
+    opacity: 1;
+}
+
+.simulator-add-btn {
+    background: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.simulator-add-btn:hover {
+    background: #218838;
+}
+
+/* Small Button Variant */
+.btn-small {
+    padding: 6px 12px;
+    font-size: 13px;
+    height: auto;
+    min-height: 32px;
+}
+
+/* Import Button Styling */
+.btn.btn-import {
+    position: relative;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 38px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+/* Button */
+.btn {
+    min-width: 75px;
+}
+
+/* Ensure all action buttons have consistent styling */
+.actions button,
+.actions .btn {
+    height: 35px;
+    min-height: 35px;
+    vertical-align: middle;
+    margin: 0;
+}
+
+/* Button States & Interactions */
+.btn:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Prevent text selection on buttons */
+.btn, .icon-btn, .action-btn {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Fix for button double-click issues */
+.btn, .icon-btn, .action-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent; 
+}
+
+/* Icon Button Hover Effects */
+.icon-btn:hover::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 8px;
+    background: rgba(var(--primary-color-rgb), 0.1);
+    z-index: -1;
+}
+
+/* Dark mode adjustments for icon buttons */
+body.dark-mode .icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Table-Specific Styles --- */
+
+/* Table container and general table styles */
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 10px; 
+    table-layout: fixed;
+}
+
+th, td { 
+    text-align: left; 
+    padding: 10px; 
+    border-bottom: 1px solid var(--table-border); 
+    font-size: 14px; 
+    vertical-align: middle; 
+    color: var(--text-color); 
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+th { 
+    background: var(--table-header-bg); 
+    font-weight: 600; 
+    border-bottom: 2px solid var(--border-color); 
+}
+
+/* Row Styles - kept only for background/opacity, borders moved to dashboard.css */
+.win-row {
+    background-color: var(--row-win-bg);
+}
+.loss-row {
+    background-color: var(--row-loss-bg);
+}
+.excluded-row {
+    opacity: 0.6;
+    background-color: var(--row-excluded-bg);
+}
+
+.no-ranking-row, .invalid-match-row {
+    opacity: 0.6;
+    background-color: #f3f4f5;
+}
+.no-ranking-row:hover, .invalid-match-row:hover {
+    opacity: 0.9;
+}
+
+/* Summary table total row */
+.summary-total-row {
+    border-top: 2px solid var(--border-color);
+    font-weight: bold;
+    background-color: var(--table-header-bg);
+}
+
+/* Table cell specific styling */
+.opp-level-cell {
+    text-align: right;
+    padding-right: 8px;
+}
+
+.opp-level-parentheses {
+    color: var(--extra-points-color);
+    font-weight: bold;
+}
+
+.opp-level-value {
+    color: var(--text-color);
+    font-weight: bold;
+    margin: 0 2px;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+/* --- Modal & Tooltip Styles --- */
+
+/* Modal Overlay */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--modal-overlay);
+  z-index: 9998;
+  transition: background-color 0.3s ease;
+}
+
+/* Modal Container */
+.modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  z-index: 9999;
+  width: 400px;
+  max-width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--table-header-bg);
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-color);
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 20px;
+  color: var(--text-color);
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Legacy Modal Styles (for backward compatibility) */
+#editModal { 
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: var(--modal-overlay); 
+}
+
+.modal-content { 
+    background-color: var(--card-bg); 
+    margin: 10% auto; 
+    padding: 20px; 
+    border-radius: 8px; 
+    width: 400px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+}
+
+.modal-actions { 
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 10px; 
+    margin-top: 20px; 
+}
+
+/* Tooltip Base Styles */
+.import-tooltip,
+.expected-level-tooltip,
+.discipline-tooltip {
+  visibility: hidden;
+  background-color: var(--tooltip-bg);
+  color: #fff;
+  border-radius: 6px;
+  padding: 12px;
+  position: absolute;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Import Tooltip */
+.import-tooltip {
+  width: 320px;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 10px;
+  text-align: left;
+}
+
+.import-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent var(--tooltip-bg) transparent;
+}
+
+.import-tooltip h4 {
+  margin: 0 0 8px 0;
+  color: #fff;
+  font-size: 14px;
+  border-bottom: 1px solid #555;
+  padding-bottom: 6px;
+}
+
+.import-tooltip ul {
+  margin: 0 0 8px 0;
+  padding-left: 20px;
+}
+
+.import-tooltip li {
+  margin-bottom: 4px;
+}
+
+.import-tooltip .format-example {
+  background-color: #444;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  margin: 8px 0;
+  border-left: 3px solid #17a2b8;
+}
+
+.import-tooltip .note {
+  font-size: 12px;
+  color: #aaa;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* Expected Level Tooltip */
+.expected-level-tooltip {
+  width: 280px;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 10px;
+  text-align: center;
+}
+
+.expected-level-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent var(--tooltip-bg) transparent;
+}
+
+/* Discipline Tooltip */
+.discipline-tooltip {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.discipline-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent var(--tooltip-bg) transparent;
+}
+
+/* Tooltip Visibility States */
+.import-tooltip-wrapper:hover .import-tooltip,
+.expected-level-container:hover .expected-level-tooltip,
+.discipline-icon:hover .discipline-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Import Tooltip Wrapper */
+.import-tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Dropdown Content (Modal-like) */
+.dropdown-content {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
+.icon-controls .dropdown-content {
+  right: 0;
+  top: 100%;
+  margin-top: 6px;
+  min-width: 280px;
+  z-index: 1002;
+  display: none;
+  position: absolute;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.icon-controls .dropdown-content.show {
+  display: block;
+}
+
+.icon-controls .dropdown-content::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 15px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--card-bg);
+  z-index: 1;
+}
+
+.icon-controls .dropdown-content::after {
+  content: '';
+  position: absolute;
+  top: -9px;
+  right: 14px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid var(--border-color);
+  z-index: 0;
+}
+
+/* Dropdown Sections */
+.dropdown-section {
+  margin-bottom: 15px;
+}
+
+.dropdown-section:last-child {
+  margin-bottom: 0;
+}
+
+.dropdown-section h5 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.dropdown-select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dropdown-select:hover,
+.dropdown-select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* Import button internal styling */
+.csv-file-input {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    z-index: -1 !important;
+}
+
+.input-scraped-time,
+.input-extra-type {
+    font-size: 0.625rem;        /* same as scraped-info */
+    color: #888;                 /* same grey */
+    line-height: 1.2;
+    height: 0.75rem;             /* preserve the reserved space */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-style: italic;
+    opacity: 0.8;
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Hover effect – matches other .row-input fields */
+.input-scraped-time:hover,
+.input-extra-type:hover {
+    border-color: var(--border-color);
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Focus effect – matches other .row-input fields */
+.input-scraped-time:focus,
+.input-extra-type:focus {
+    border-color: var(--primary-color);
+    background-color: var(--input-bg);
+    outline: none;
+}
+
+/* Dark mode support */
+body.dark-mode .input-scraped-time,
+body.dark-mode .input-extra-type {
+    color: #aaa;   /* or var(--extra-points-color) */
+}
+
+/* Small icon for edit buttons */
+.icon-small {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Badminton Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="chart.js"></script>
+</head>
+<body class="dashboard-body">
+  <div class="header">
+    <div class="header-left">
+      <h1>Your Badminton Analysis</h1>
+      <div class="discipline-selector">
+        <div class="discipline-icon active" data-discipline="S" title="Singles">
+          <img src="singles-light.png" class="light-icon" alt="Singles">
+          <img src="singles-dark.png" class="dark-icon" alt="Singles">
+          <span class="discipline-tooltip">Singles</span>
+        </div>
+        <div class="discipline-icon" data-discipline="D" title="Doubles">
+          <img src="doubles-light.png" class="light-icon" alt="Doubles">
+          <img src="doubles-dark.png" class="dark-icon" alt="Doubles">
+          <span class="discipline-tooltip">Doubles</span>
+        </div>
+        <div class="discipline-icon" data-discipline="M" title="Mixed">
+          <img src="mixed-light.png" class="light-icon" alt="Mixed">
+          <img src="mixed-dark.png" class="dark-icon" alt="Mixed">
+          <span class="discipline-tooltip">Mixed</span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <span id="statusMsg"></span>
+      <div class="import-tooltip-wrapper">
+        <button class="btn btn-import" id="importCSVBtn">Import CSV</button>
+        <input type="file" id="csvInput" accept=".csv" class="csv-file-input">
+        <div class="import-tooltip">
+          <h4 id="csvImportHeading">CSV Import Instructions</h4>
+          <div class="format-section">
+            <h5 id="singlesFormatHeading">Singles Format</h5>
+            <p>For singles matches, your CSV should have the following columns:</p>
+            <ul>
+              <li><strong>Date</strong> (dd/mm/yy or dd/mm/yyyy)</li>
+              <li><strong>Opponent Name</strong></li>
+              <li><strong>My Level</strong> (1-12)</li>
+              <li><strong>Opponent Level</strong> (1-12)</li>
+              <li><strong>Score</strong> (format: 21-19 21-15)</li>
+              <li><strong>Extra Points</strong> (optional)</li>
+              <li><strong>Blank column</strong></li>
+              <li><strong>Phase/Tournament</strong> (optional)</li>
+              <li><strong>Duration</strong> (minutes, optional)</li>
+            </ul>
+            <div class="format-example" id="singlesFormatExample">
+              14/12/24;John Doe;12;11;21-19 21-15;0;;IC Tournament;45
+            </div>
+          </div>
+          <div class="format-section">
+            <h5 id="doublesMixedFormatHeading">Doubles/Mixed Format</h5>
+            <p>For doubles and mixed matches, your CSV should have the following columns:</p>
+            <ul>
+              <li><strong>Date</strong> (dd/mm/yy or dd/mm/yyyy)</li>
+              <li><strong>Teammate Name</strong></li>
+              <li><strong>Discipline</strong> (D for Doubles, M for Mixed)</li>
+              <li><strong>My Level</strong> (1-12)</li>
+              <li><strong>Teammate Level</strong> (1-12)</li>
+              <li><strong>Opponent 1 Name</strong></li>
+              <li><strong>Opponent 1 Level</strong> (1-12)</li>
+              <li><strong>Opponent 2 Name</strong> (optional, leave empty for 2v1)</li>
+              <li><strong>Opponent 2 Level</strong> (optional, leave empty for 2v1)</li>
+              <li><strong>Score</strong> (format: 21-19 21-15)</li>
+              <li><strong>Phase/Tournament</strong> (optional)</li>
+              <li><strong>Duration</strong> (minutes, optional)</li>
+            </ul>
+            <div class="format-example" id="doublesFormatExample">
+              14/12/24;Jane Smith;D;12;11;John Doe;11;Mike Johnson;12;21-19 21-15;Club Tournament;60
+            </div>
+          </div>
+          <p class="note" id="csvNoteColumns">Note: Columns must be separated by semicolons (;). The first row should contain headers.</p>
+          <p class="note" id="csvExtraNote">When exporting, the system automatically includes scraped time and extra type information in additional columns.</p>
+        </div>
+      </div>
+      <button class="btn btn-export" id="exportBtn">Export Excel</button>
+      <button class="btn btn-primary" id="scrapeAllBtn">Scrape All</button>
+      <button class="btn btn-danger" id="clearAllDisciplinesBtn">Clear All</button>
+
+      <div class="icon-controls">
+        <div class="icon-btn" id="themeBtn" title="Toggle Theme">🌙</div>
+        <div class="dropdown">
+          <div class="icon-btn" id="settingsBtn" title="Settings">⚙️</div>
+          <div class="dropdown-content" id="settingsDropdown">
+            <div class="dropdown-section">
+              <h5>Language</h5>
+              <select id="languageSelect" class="dropdown-select">
+                <option value="en">🇺🇸 English</option>
+                <option value="nl">🇳🇱 Nederlands</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="de">🇩🇪 Deutsch</option>
+              </select>
+            </div>
+            <div class="dropdown-section">
+              <h5 id="profileScrapingProfilesHeading">Scraping Profiles</h5>
+              <div class="profile-input-group">
+                <label for="badmintonVlaanderenProfile">
+                  <img src="icon-badmintonvlaanderen.png" class="profile-icon" alt="BadmintonVlaanderen">
+                  <span id="badmintonVlaanderenLabel">badminton.vlaanderen Profile URL</span>
+                </label>
+                <input type="url" 
+                       id="badmintonVlaanderenProfile" 
+                       class="profile-input" 
+                       placeholder="https://www.badmintonvlaanderen.be/profile/..."
+                       pattern="https://www\.badmintonvlaanderen\.be/.*">
+              </div>
+              <div class="profile-input-group">
+                <label for="toernooiProfile">
+                  <img src="icon-toernooi.png" class="profile-icon" alt="Toernooi.nl">
+                  <span id="toernooiLabel">toernooi.nl Profile URL</span>
+                </label>
+                <input type="url" 
+                       id="toernooiProfile" 
+                       class="profile-input" 
+                       placeholder="https://www.toernooi.nl/player-profile/..."
+                       pattern="https://www\.toernooi\.nl/.*">
+              </div>
+              <div class="profile-note" id="profileNote">
+                <small>Note: These profiles will be used for automatic match scraping.</small>
+              </div>
+            </div>
+            <div class="dropdown-section">
+              <h5>CSV Format</h5>
+              <select id="delimiterSelect" class="dropdown-select">
+                <option value=";">Semicolon (;)</option>
+                <option value=",">Comma (,)</option>
+              </select>
+            </div>
+            <div class="dropdown-section">
+              <h5>Actions</h5>
+              <button class="btn btn-secondary btn-small" id="resetSettingsBtn">Reset Settings</button>
+            </div>
+            <div class="dropdown-section">
+              <h5>Demo</h5>
+              <button class="btn btn-secondary btn-small" id="restartTourBtn">Show Tour</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-container">
+    <div class="card" id="trophiesCard">
+      <h3 data-i18n="dashboard.trophies">Trophies</h3>
+      <div class="trophy-icons">
+        <div class="trophy-icon gold" data-category="gold">
+          🥇 <span class="trophy-count" id="goldCount">0</span>
+          <span class="expected-level-tooltip" id="goldTooltip"></span>
+        </div>
+        <div class="trophy-icon silver" data-category="silver">
+          🥈 <span class="trophy-count" id="silverCount">0</span>
+          <span class="expected-level-tooltip" id="silverTooltip"></span>
+        </div>
+        <div class="trophy-icon bronze" data-category="bronze">
+          🥉 <span class="trophy-count" id="bronzeCount">0</span>
+          <span class="expected-level-tooltip" id="bronzeTooltip"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="expected-level-container">
+        <h3>Expected Level</h3>
+        <div class="expected-level-display">
+          <input type="number" id="expectedLevelInput" min="1" max="12" value="12">
+          <span class="current-points" id="currentPointsDisplay">(0)</span>
+        </div>
+        <div class="sub-value">Current Ranking Points</div>
+        <div class="expected-level-tooltip" id="expectedLevelTooltip">
+          Loading level information...
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Total Matches</h3>
+      <div class="value" id="totalMatches">0</div>
+      <div class="sub-value">Last 52 weeks: <span id="recentMatches">0</span></div>
+    </div>
+
+    <div class="card">
+      <h3>Simulations</h3>
+      <div class="simulation-icons">
+        <div class="simulation-icon" id="quickSimulatorBtn" title="Quick 'What If' Calculator">🔢</div>
+        <div class="simulation-icon" id="pathToLevelBtn" title="Path to Level X">🎯</div>
+        <div class="simulation-icon" id="compareBtn" title="Compare Player">🆚</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="quickSimulatorOverlay"></div>
+  <div class="modal" id="quickSimulatorModal">
+    <div class="modal-header">
+      <h3>Quick "What If" Calculator</h3>
+      <button class="close-modal" id="closeQuickSimulator">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Simulate what happens if you win matches against certain opponents.</p>
+      <div class="simulator-controls">
+        <div class="simulator-row" id="simulatorRow1">
+          <span>If I win</span>
+          <input type="number" id="simulatorWins1" class="simulator-input" min="1" max="20" value="1">
+          <span>match(es) against level</span>
+          <select id="simulatorOppLevel1" class="simulator-input">
+            <option value="12">12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+          <button class="simulator-remove-btn hidden" id="removeRow1">&times;</button>
+        </div>
+        <div class="simulator-row hidden" id="simulatorRow2">
+          <span>and</span>
+          <input type="number" id="simulatorWins2" class="simulator-input" min="1" max="20" value="1">
+          <span>match(es) against level</span>
+          <select id="simulatorOppLevel2" class="simulator-input">
+            <option value="12">12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+          <button class="simulator-remove-btn" id="removeRow2">&times;</button>
+        </div>
+        <div class="simulator-row hidden" id="simulatorRow3">
+          <span>and</span>
+          <input type="number" id="simulatorWins3" class="simulator-input" min="1" max="20" value="1">
+          <span>match(es) against level</span>
+          <select id="simulatorOppLevel3" class="simulator-input">
+            <option value="12">12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+          <button class="simulator-remove-btn" id="removeRow3">&times;</button>
+        </div>
+        <button class="simulator-add-btn" id="addRowBtn">
+          <span>+ Add another opponent level</span>
+        </button>
+        <div class="simulator-margin-top">
+          <button class="btn btn-primary" id="calculateSimulation">Calculate</button>
+        </div>
+      </div>
+      <div class="simulator-result hidden" id="simulatorResult">
+        <h4>Simulation Result</h4>
+        <div id="simulatorResultContent"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="closeQuickSimulatorBtn">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="pathToLevelOverlay"></div>
+  <div class="modal" id="pathToLevelModal">
+    <div class="modal-header">
+      <h3>Path to Level X</h3>
+      <button class="close-modal" id="closePathToLevel">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>See what it takes to reach your target level.</p>
+      <div class="level-selector">
+        <span>I want to reach level</span>
+        <div class="level-target" id="currentTargetLevel">11</div>
+        <button class="btn" id="decreaseLevel">-</button>
+        <button class="btn" id="increaseLevel">+</button>
+      </div>
+      <div class="path-options" id="pathOptions"></div>
+      <div class="modal-note">
+        <strong>Note:</strong> Calculations are based on your current ranking window (last 20 valid matches).
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="closePathToLevelBtn">Close</button>
+    </div>
+  </div>
+
+  <!-- UPDATED COMPARE MODAL with two URL inputs -->
+  <div class="modal-overlay" id="compareOverlay"></div>
+  <div class="modal" id="compareModal">
+    <div class="modal-header" style="justify-content: center;">
+      <h3>Compare player</h3>
+      <button class="close-modal" id="closeCompareBtn" style="position: absolute; right: 1rem;">&times;</button>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+      <p style="margin-bottom: 1.5rem;">Overlay another player's ranking evolution on your chart.</p>
+
+      <!-- Saved players list (unchanged) -->
+      <div style="margin-bottom: 2rem;">
+        <h4 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+          Saved players
+        </h4>
+        <div id="savedPlayersList" style="display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch;">
+          <div style="color: var(--text-muted); font-style: italic;">No saved players yet.</div>
+        </div>
+      </div>
+
+      <!-- Add new rival section -->
+      <div>
+        <h4 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+          Add a new rival
+        </h4>
+
+        <!-- Row 1: Name and Toernooi.nl URL (side by side) -->
+        <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 0.5rem;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem; text-align: left;">
+            <label for="compareName" style="font-weight: 600; font-size: 0.9rem;">Name</label>
+            <input type="text" id="compareName" class="profile-input" 
+                   placeholder="e.g. Mufasa" style="width: 100%;">
+          </div>
+          <div style="flex: 2; display: flex; flex-direction: column; gap: 0.25rem; text-align: left;">
+            <label for="compareToernooiUrl" style="font-weight: 600; font-size: 0.9rem;">
+              Toernooi.nl Profile URL
+            </label>
+            <input type="url" id="compareToernooiUrl" class="profile-input" 
+                   placeholder="https://www.toernooi.nl/player-profile/..." 
+                   style="width: 100%;">
+          </div>
+        </div>
+        <!-- Hint for Toernooi.nl -->
+        <div class="input-hint" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Link needs to be a toernooi.nl profile rating page.
+        </div>
+
+        <!-- Row 2: Badminton Vlaanderen URL (full width) -->
+        <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 0.5rem;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem; text-align: left;">
+            <label for="compareBadmintonUrl" style="font-weight: 600; font-size: 0.9rem;">
+              Badminton Vlaanderen Profile URL
+            </label>
+            <input type="url" id="compareBadmintonUrl" class="profile-input" 
+                   placeholder="https://www.badmintonvlaanderen.be/profile/..." 
+                   style="width: 100%;">
+          </div>
+        </div>
+        <!-- Hint for Badminton Vlaanderen -->
+        <div class="input-hint" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          Optional: add a badminton.vlaanderen profile to include those matches.
+        </div>
+
+        <!-- Save button -->
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <button class="btn btn-primary" id="runCompareBtn" style="margin-left: auto;">
+            Save
+          </button>
+        </div>
+        
+        <div id="compareStatus" style="margin-top: 0.75rem; font-size: 0.85rem; min-height: 1.5rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-box">
+      <div class="chart-filter-container">
+        <h4>Win/Loss ratio</h4>
+        <select id="wlYearFilter" class="chart-year-filter">
+          <option value="all">All Years</option>
+        </select>
+      </div>
+      <div class="flex-cell">
+         <table class="summary-table">
+            <thead>
+               <tr>
+                   <th>Lvl</th>
+                   <th>W</th>
+                   <th>L</th>
+                   <th>%</th>
+               </tr>
+            </thead>
+            <tbody id="lvlSummaryBody"></tbody>
+         </table>
+      </div>
+    </div>
+
+    <!-- SECOND CHART BOX (Points Won/Lost cumulative) -->
+    <div class="chart-box">
+      <div class="chart-filter-container">
+        <select id="rivalSelector" class="chart-rival-filter">
+          <option value="me">Me</option>
+        </select>
+        <div class="chart-title-with-dropdown" id="secondChartTitleContainer">
+          <h4 id="secondChartTitle">Evolution of ranking score</h4>
+          <span class="dropdown-arrow" id="secondChartDropdownArrow">▼</span>
+          <div class="dropdown-menu" id="secondChartDropdownMenu">
+            <div class="dropdown-item active" data-chart="ranking">Ranking Evolution</div>
+            <div class="dropdown-item" data-chart="points-cumulative">Points Won/Lost</div>
+          </div>
+        </div>
+        <select id="chartYearFilter" class="chart-year-filter">
+          <option value="all">All Years</option>
+        </select>
+      </div>
+      <div class="chart-error" id="chartError1">
+        Chart.js not loaded.<br>Please download <b>chart.js</b> to your extension folder.
+      </div>
+      <div class="canvas-container">
+        <canvas id="progressionChart"></canvas>
+      </div>
+    </div>
+
+    <!-- THIRD CHART BOX (Shot Percentage) -->
+    <div class="chart-box">
+      <div class="chart-filter-container">
+        <div class="chart-title-with-dropdown" id="thirdChartTitleContainer">
+          <h4 id="thirdChartTitle">Score Margins</h4>
+          <span class="dropdown-arrow" id="thirdChartDropdownArrow">▼</span>
+          <div class="dropdown-menu" id="thirdChartDropdownMenu">
+            <div class="dropdown-item active" data-chart="margins">Score Margins</div>
+            <div class="dropdown-item" data-chart="shot-percentage">Shot Percentage</div>
+            <div class="dropdown-item" data-chart="competition-tournament">Competition vs. Tournaments</div>
+          </div>
+        </div>
+        <div class="filter-group" id="thirdChartFilters">
+          <select id="setYearFilter" class="chart-filter">
+            <option value="all">All Years</option>
+          </select>
+          <select id="setLevelFilter" class="chart-filter">
+            <option value="all">Opp Lvl</option>
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+            <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          </select>
+          <select id="setSetFilter" class="chart-filter">
+            <option value="all">All Sets</option>
+            <option value="1">1st Set</option>
+            <option value="2">2nd Set</option>
+            <option value="3">3rd Set</option>
+          </select>
+          <select id="setTimeFilter" class="chart-filter">
+            <option value="all">All Times</option>
+            <option value="morning">Morning</option>
+            <option value="afternoon">Afternoon</option>
+            <option value="unknown">Unknown</option>
+          </select>
+        </div>
+      </div>
+      <div class="chart-error" id="chartErrorSet" style="display: none;"></div>
+      <!-- Shot percentage explanation (hidden by default) -->
+      <div id="shotPercentageExplanation" style="display: none; text-align: center; margin: 5px 0; font-size: 0.9rem; color: var(--text-color);">
+        <p class="shot-percentage-note">* Total points won / total points played)</p>
+        <div class="shot-percentage-scale">
+          <span style="color: #dc3545;">40%</span>
+          <span style="color: #6c757d;">50%</span>
+          <span style="color: #28a745;">60%</span>
+        </div>
+      </div>
+      <div class="canvas-container">
+        <canvas id="setChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-box">
+    <h3>Match History</h3>
+    <table id="matchTable">
+      <thead>
+        <tr>
+          <th class="singles-col date-col" style="width: 9%;">
+            <div class="header-content">
+            <span class="header-title sortable-header" data-sort="date">
+                Date
+                <span class="sort-indicator"></span>
+            </span>
+            <select id="filterYear" class="table-filter"><option value="all">Date</option></select>
+            </div>
+          </th>
+          <th class="singles-col type-col" style="width: 24%;">
+            <div class="header-content">
+                <span class="header-title sortable-header" data-sort="type">
+                  Type
+                  <span class="sort-indicator"></span>
+                </span>
+                <input type="text" id="filterType" class="table-filter" placeholder="Phase/Tournament">
+            </div>
+          </th>
+          <th class="singles-col mylvl-col" style="width: 5%;">
+            <div class="header-content">
+                <span class="header-title">My Lvl</span>
+                <select id="filterMyLvl" class="table-filter"><option value="all">My Lvl</option></select>
+            </div>
+          </th>
+          <th class="singles-col opp-lvl-col" style="width: 5%;">
+            <div class="header-content">
+                 <span class="header-title">Opp Lvl</span>
+                 <select id="filterOppLvl" class="table-filter"><option value="all">Opp Lvl</option></select>
+            </div>
+          </th>
+          <th class="singles-col opp-name-col" style="width: 17%;">
+            <div class="header-content">
+                <span class="header-title" id="playersColumnTitle">Opponent</span>
+                <input type="text" id="filterOpponent" class="table-filter" placeholder="Search players..." list="oppList">
+                <datalist id="oppList"></datalist>
+            </div>
+          </th>
+          <th class="singles-col score-col" style="width: 18%;">
+            <div class="header-content">
+                <span class="header-title sortable-header" data-sort="result">
+                    Score (Time)
+                    <span class="sort-indicator"></span>
+                </span>
+                <select id="filterResult" class="table-filter">
+                    <option value="all">Win/loss</option>
+                    <option value="Win">Win</option>
+                    <option value="Loss">Loss</option>
+                </select>
+            </div>
+          </th>
+          <th class="singles-col points-col" style="width:13%;">
+            <div class="header-content">
+                <span class="header-title">New<br>Ranking<br>Points</span>
+            </div>
+          </th>
+          <th class="singles-col actions-col" style="width: 9%;">
+            <div class="header-content">
+                <button class="btn-clear-all-header btn-danger" id="clearAllSinglesBtn" title="Clear all matches">Clear all</button>
+            </div>
+          </th>
+          <th class="doubles-col date-col" style="width: 9%; display: none;">
+              <div class="header-content">
+                  <span class="header-title sortable-header" data-sort="date">
+                      Date
+                      <span class="sort-indicator"></span>
+                  </span>
+                  <select id="filterYearDoubles" class="table-filter">
+                      <option value="all">Year</option>
+                  </select>
+              </div>
+          </th>
+          <th class="doubles-col type-col" style="width: 17%; display: none;">
+              <div class="header-content">
+                  <span class="header-title sortable-header" data-sort="type">
+                      Type
+                      <span class="sort-indicator"></span>
+                  </span>
+                  <input type="text" id="filterTypeDoubles" class="table-filter" placeholder="Search type...">
+              </div>
+          </th>
+          <th class="doubles-col names-col" style="width: 16%; display: none;">
+              <div class="header-content">
+                  <span class="header-title">Our Team</span>
+                  <input type="text" id="filterTeam" class="table-filter" placeholder="Search teammates...">
+              </div>
+          </th>
+          <th class="doubles-col levels-col" style="width: 5%; display: none;">
+              <div class="header-content">
+                  <small><span class="header-title">Our Lvls</span></small>
+                  <select id="filterOurLevels" class="table-filter">
+                      <option value="all">All</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                  </select>
+              </div>
+          </th>
+          <th class="doubles-col opplevels-col" style="width: 5%; display: none;">
+              <div class="header-content">
+                  <small><span class="header-title">Opp Lvls</span></small>
+                  <select id="filterOppLevels" class="table-filter">
+                      <option value="all">All</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                  </select>
+              </div>
+          </th>
+          <th class="doubles-col oppnames-col" style="width: 16%; display: none;">
+              <div class="header-content">
+                  <span class="header-title">Opponents</span>
+                  <input type="text" id="filterOpponentsDoubles" class="table-filter" placeholder="Search opponents...">
+              </div>
+          </th>
+          <th class="doubles-col score-col" style="width: 17%; display: none;">
+              <div class="header-content">
+                  <span class="header-title sortable-header" data-sort="result">
+                      Score
+                      <span class="sort-indicator"></span>
+                  </span>
+                  <select id="filterResultDoubles" class="table-filter">
+                      <option value="all">Win/Loss</option>
+                      <option value="Win">Win</option>
+                      <option value="Loss">Loss</option>
+                  </select>
+              </div>
+          </th>
+          <th class="doubles-col points-col" style="width: 10%; display: none;">
+              <div class="header-content">
+                  <span class="header-title">New<br>Ranking<br>Points</span>
+              </div>
+          </th>
+          <th class="doubles-col actions-col" style="width: 10%; display: none;">
+              <div class="header-content">
+                  <button class="btn-clear-all-header btn-danger" id="clearAllDoublesBtn" title="Clear all matches">Clear all</button>
+              </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>
